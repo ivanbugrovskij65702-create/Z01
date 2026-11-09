@@ -111,6 +111,7 @@ const DEMO = SHOW_DEMO_BOTS ? [
 const tgUser = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user;
 if (window.Telegram && window.Telegram.WebApp) {
  try { window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); } catch(e){}
+ try { window.Telegram.WebApp.disableVerticalSwipes(); } catch(e){}
 }
 
 let cloudAthletes = [];

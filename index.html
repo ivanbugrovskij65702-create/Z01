@@ -40,9 +40,9 @@ button{font:inherit}.big{flex:1;padding:13px;border:0;border-radius:12px;backgro
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, collection, doc, setDoc, getDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app-check.js";
 
 window.MY_FIREBASE_CONFIG = {
-  import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app-check.js";
   apiKey: "AIzaSyAgS7XE3sJ29bqOphE6LTkKPMiBJV5a864",
   authDomain: "z01id-29466.firebaseapp.com",
   projectId: "z01id-29466",
@@ -50,33 +50,29 @@ window.MY_FIREBASE_CONFIG = {
   messagingSenderId: "945686131795",
   appId: "1:945686131795:web:ad3ff91463186aeb5202a6"
 };
-window.FB = { initializeApp, getAuth, signInAnonymously, signInWithCustomToken, getFirestore, collection, doc, setDoc, getDoc, getDocs, onSnapshot };
+window.FB = { initializeApp, getAuth, signInAnonymously, signInWithCustomToken, getFirestore, collection, doc, setDoc, getDoc, getDocs, onSnapshot, initializeAppCheck, ReCaptchaEnterpriseProvider };
 if (window.initCloudSync) window.initCloudSync();
-  const appCheck = initializeAppCheck(app, {
-  provider: new ReCaptchaEnterpriseProvider('6LeXUxguaAAAAABgRUv1jlS3Z9qaORVa-f9jJ8guN'),
-  isTokenAutoRefreshEnabled: true
-});
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 const $=id=>document.getElementById(id);
-const BASE=[["pull","Подтягивания"],["push","Отжимания"],["sq","Приседания"]];
+const BASE=[["pull","Подтягивания"],["push","Отжимания"],["sq","Приседания"],["osq","Приседания на одной ноге"]];
 const SEC=[
-["Блок 2 · Экстремальная калистеника",[["mup","Выход силой на две"],["opull","Подтягивания на одной руке"],["opush","Отжимания на одной руке на полу"],["odip","Отжимания на брусьях на одной руке"],["fl","Удержание переднего виса (сек)"],["hor","Удержание горизонта (сек)"],["pl","Удержание планша (сек)"],["hspu","Отжимания в стойке на руках"],["hs","Стойка на руках (сек)"]]],
+["Блок 2 · Экстремальная калистеника",[["mup","Выход силой на две"],["opull","Подтягивания на одной руке"],["opush","Отжимания на одной руке на полу"],["odip","Отжимания на брусьях на одной руке"],["fl","Удержание переднего виса (сек)"],["hor","Удержание горизонта (сек)"],["pl","Удержание планша (сек)"],["hspu","Отжимания в стойке на руках"],["hs","Стойка на руках (сек)"],["fthumb1","Отжимания на одном большом пальце от пола"],["cti","Удержание CTI (сек)"]]],
 ["Блок 3 · Зал и вес (кг)",[["bench","Жим штанги"],["squat","Присед со штангой"],["dead","Становая тяга"],["wpull","Подтягивания с доп. весом"],["wdip","Брусья с доп. весом"]]],
 ["Блок 4 · Сухожилия и статодинамика",[["finger","Отжимания на всех пальцах"],["f2","Отжимания на 2 пальцах (указ.+сред.)"],["fthumb","Отжимания на больших пальцах"],["fpull1","Подтягивания на одном пальце"],["ohold90","Статич. удержание на одной руке 90° (сек)"]]]];
 const LAB={bw:"Собственный вес (кг)"};SEC.forEach(s=>s[1].forEach(f=>LAB[f[0]]=f[1]));BASE.forEach(f=>LAB[f[0]]=f[1]);
 
-const MAX_PTS = 4500;
-const STEP_PTS = MAX_PTS / 19; // ~236.84 балла на каждую ступень, чтобы ровно на 4 500 открывалась 20-я ступень
+const MAX_PTS = 5000;
+const STEP_PTS = MAX_PTS / 19; // ~263.16 балла на каждую ступень, чтобы ровно на 5 000 открывалась 20-я ступень
 
 function calc(v){
  const n=k=>Math.max(0, +v[k]||0);
 
  // Блок 1 (База) + Блок 2 (Экстремальная калистеника)
- const basePts = n("pull")*2 + n("push")*1 + n("sq")*1;
- const extCalPts = n("mup")*3 + n("opull")*5 + n("opush")*3 + n("odip")*8 + n("fl")*3 + n("hor")*4 + n("pl")*7 + n("hspu")*3 + n("hs")*1;
+ const basePts = n("pull")*2 + n("push")*1 + n("sq")*1 + n("osq")*3;
+ const extCalPts = n("mup")*3 + n("opull")*5 + n("opush")*3 + n("odip")*8 + n("fl")*3 + n("hor")*4 + n("pl")*7 + n("hspu")*3 + n("hs")*1 + n("fthumb1")*10 + n("cti")*15;
  const cs = basePts + extCalPts;
 
  // Блок 3 · Зал и вес (кг)
@@ -85,10 +81,10 @@ function calc(v){
  // Блок 4 · Сухожилия и статодинамика
  const ts = n("finger")*1.5 + n("f2")*3 + n("fthumb")*3 + n("fpull1")*10 + n("ohold90")*1;
 
- // Общая сумма баллов со всех блоков (максимум 4 500 баллов = 20 ступень)
+ // Общая сумма баллов со всех блоков (максимум 5 000 баллов = 20 ступень)
  const totalPts = Math.min(MAX_PTS, Math.round((cs + gs + ts)*10)/10);
 
- // Перевод баллов в ступень (от 1 до 20 равномерно, где 4 500 = 20 ступень)
+ // Перевод баллов в ступень (от 1 до 20 равномерно, где 5 000 = 20 ступень)
  const toStep = pts => pts >= MAX_PTS ? 20 : Math.max(1, Math.min(19, 1 + Math.floor(pts / STEP_PTS)));
 
  const lg = toStep(totalPts);
@@ -99,7 +95,7 @@ function calc(v){
  let cls = {cal:"Адепт Калистеники",gym:"Титан Сверхвесов",tend:"Мастер Сухожилий"}[top];
  let dir = top;
 
- if(cs >= 1125 && gs >= 1125){
+ if(cs >= 1250 && gs >= 1250){
   cls = "Гибрид";
   dir = "hyb";
  }
@@ -141,6 +137,14 @@ window.initCloudSync = async function() {
   if (rawCfg) {
    window._cloudStarted = true;
    const app = window.FB.initializeApp(rawCfg);
+   if (window.FB.initializeAppCheck && window.FB.ReCaptchaEnterpriseProvider) {
+    try {
+     window.FB.initializeAppCheck(app, {
+      provider: new window.FB.ReCaptchaEnterpriseProvider('6LeXUxguaAAAAABgRUv1jlS3Z9qaORVa-f9jJ8guN'),
+      isTokenAutoRefreshEnabled: true
+     });
+    } catch (e) { console.warn("AppCheck init err:", e); }
+   }
    const auth = window.FB.getAuth(app);
    const db = window.FB.getFirestore(app);
    window.dbRef = db;
@@ -983,7 +987,7 @@ function form(){
   } else { saveRecord(); }
  };
 }
-/* === Z01: защита от XSS. Вставить над строкой  $("me").onclick=form;  === */
+/* === Z01: защита от XSS === */
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const safeAv=u=>(typeof u==="string"&&u.length<30000&&/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(u))?u:"";
 const cleanV=v=>{const o={};if(v&&typeof v==="object")for(const k in LAB){const x=v[k];if(x!==""&&x!=null&&isFinite(+x))o[k]=+x}return o};

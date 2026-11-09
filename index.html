@@ -818,8 +818,8 @@ function snowUpd(t){
 let s=0,ts=0;const SMAX=21.4;
 addEventListener("wheel",e=>{ts=Math.max(0,Math.min(SMAX,ts+e.deltaY*.003))},{passive:true});
 let dy=null,mv=0;
-addEventListener("pointerdown",e=>{if(e.target.closest(".md,#top,#bar"))return;dy=-e.clientY;mv=0});
-addEventListener("pointermove",e=>{if(dy==null)return;const d=e.clientY-dy;dy=-e.clientY;mv+=Math.abs(d);ts=Math.max(0,Math.min(SMAX,ts-d*.012))});
+addEventListener("pointerdown",e=>{if(e.target.closest(".md,#top,#bar"))return;dy=e.clientY;mv=0});
+addEventListener("pointermove",e=>{if(dy==null)return;const d=e.clientY-dy;dy=e.clientY;mv+=Math.abs(d);ts=Math.max(0,Math.min(SMAX,ts-d*.012))});
 addEventListener("pointerup",()=>dy=null);
 const SKY=[0x9fd3ff,0xdfeaf2,0x3a3d48,0x120808].map(c=>new THREE.Color(c)),col=new THREE.Color();
 S.fog=new THREE.Fog(0x9fd3ff,35,190);S.background=new THREE.Color(0x9fd3ff);

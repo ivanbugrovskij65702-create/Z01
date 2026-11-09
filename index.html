@@ -960,6 +960,27 @@ function form(){
   } else { saveRecord(); }
  };
 }
+/* === Z01: защита от XSS. Вставить над строкой  $("me").onclick=form;  === */
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const safeAv=u=>(typeof u==="string"&&u.length<30000&&/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(u))?u:"";
+const cleanV=v=>{const o={};if(v&&typeof v==="object")for(const k in LAB){const x=v[k];if(x!==""&&x!=null&&isFinite(+x))o[k]=+x}return o};
+const safeA=x=>Object.assign({},x,{name:esc(String(x.name||"Атлет").slice(0,30)),avatar:safeAv(x.avatar),v:cleanV(x.v)});
+all=function(){
+ const map=new Map();
+ DEMO.forEach((d,i)=>map.set('demo_'+i,d));
+ cloudAthletes.forEach(a=>map.set(a.id,a));
+ if(me)map.set(myId,Object.assign({me:1,id:myId},me));
+ return Array.from(map.values()).map(x=>{const y=safeA(x);y.r=calc(y.v);return y});
+};
+const _form=form;
+form=function(){
+ const real=me;
+ try{
+  if(real)me=Object.assign({},real,{name:esc(String(real.name||"").slice(0,30)),v:cleanV(real.v)});
+  _form();
+  const i=$("i_name");if(i){i.maxLength=30;i.value=i.value.slice(0,30)}
+ }finally{me=real}
+};
 
 $("me").onclick=form;
 build(); requestAnimationFrame(frame);
